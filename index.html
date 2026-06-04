@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>夜色YS｜貴賓檔案上傳系統 — 客服操作教學</title>
 <style>
@@ -11,317 +11,401 @@
     --line:#26314a; --txt:#e8edf6; --muted:#93a0b8; --muted2:#6b778f;
     --gold:#e8c074; --gold-d:#caa052;
     --blue:#3f86ff; --teal:#27d3c4; --green:#34c759; --red:#ff5a6e;
-    --r:16px;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    margin:0; background:radial-gradient(1200px 600px at 50% -200px,#16213a 0%,var(--bg) 60%);
-    color:var(--txt); line-height:1.7;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",Roboto,"Helvetica Neue",Arial,sans-serif;
-    padding:0 16px env(safe-area-inset-bottom);
-  }
-  .wrap{max-width:880px;margin:0 auto;padding:28px 0 70px}
+  html,body{height:100%;margin:0;overflow:hidden;
+    background:radial-gradient(1100px 560px at 50% -160px,#16213a 0%,var(--bg) 62%);
+    color:var(--txt);-webkit-text-size-adjust:100%;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",Roboto,Arial,sans-serif}
 
-  /* ===== Header ===== */
-  .hero{text-align:center;padding:14px 0 8px}
-  .logo{font-size:clamp(28px,7vw,40px);font-weight:900;letter-spacing:1px;line-height:1}
-  .logo .y{color:var(--gold);text-shadow:0 2px 12px rgba(232,192,116,.35)}
-  .logo .s{color:var(--gold);-webkit-text-stroke:0}
-  .crown{font-size:.55em;vertical-align:.5em;margin-left:-2px}
-  .htitle{font-size:clamp(18px,4.6vw,24px);font-weight:800;margin:14px 0 6px}
-  .hsub{color:var(--muted);font-size:14px;max-width:620px;margin:0 auto}
-  .pill{display:inline-block;margin-top:12px;padding:5px 14px;border:1px solid var(--line);
-    border-radius:999px;font-size:12.5px;color:var(--gold);background:rgba(232,192,116,.07)}
+  /* ===== 頂部:品牌 + 進度條 ===== */
+  .top{position:fixed;top:0;left:0;right:0;z-index:20;
+    display:flex;align-items:center;gap:10px;padding:12px 16px;
+    padding-top:max(12px,env(safe-area-inset-top));
+    background:linear-gradient(180deg,rgba(10,14,22,.96),rgba(10,14,22,.6) 80%,transparent)}
+  .brand{font-weight:900;font-size:15px;letter-spacing:.5px;flex:none}
+  .brand .y{color:var(--gold)}
+  .prog{flex:1;height:5px;border-radius:99px;background:#1c2538;overflow:hidden}
+  .prog .bar{height:100%;width:10%;border-radius:99px;
+    background:linear-gradient(90deg,var(--blue),var(--teal));transition:width .35s ease}
+  .pageno{flex:none;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;min-width:38px;text-align:right}
 
-  /* ===== Flow strip ===== */
-  .flow{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;
-    margin:26px 0 6px}
-  .flow .f{background:var(--card);border:1px solid var(--line);border-radius:12px;
-    padding:9px 13px;font-size:13px;font-weight:600;white-space:nowrap}
-  .flow .arr{color:var(--gold-d);font-weight:900}
+  /* ===== 滑動容器(transform 位移式,不依賴 scroll-snap)===== */
+  .deck{height:100dvh;height:100vh;overflow:hidden;touch-action:pan-y}
+  .track{display:flex;height:100%;transition:transform .34s cubic-bezier(.4,0,.2,1);will-change:transform}
+  .track.drag{transition:none}
+  .slide{flex:0 0 100%;width:100vw;height:100dvh;height:100vh;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+    padding:72px 18px 104px;padding-bottom:calc(104px + env(safe-area-inset-bottom));
+    display:flex;flex-direction:column}
+  .slide::-webkit-scrollbar{display:none}
+  .inner{max-width:540px;width:100%;margin:auto;display:flex;flex-direction:column;gap:14px}
 
-  /* ===== Section ===== */
-  section{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
-    padding:20px 18px;margin:18px 0;box-shadow:0 8px 30px rgba(0,0,0,.25)}
-  .sec-no{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
-    border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--teal));
-    color:#031022;font-weight:900;font-size:15px;flex:none}
-  h2{display:flex;align-items:center;gap:11px;font-size:clamp(17px,4.4vw,21px);margin:0 0 6px}
-  h2 small{color:var(--muted);font-weight:600;font-size:13px}
-  .lead{color:var(--muted);font-size:14px;margin:2px 0 16px}
+  /* ===== 共用元件 ===== */
+  .kicker{display:inline-flex;align-items:center;gap:9px;align-self:flex-start;
+    font-size:12.5px;font-weight:800;color:#031022;
+    background:linear-gradient(135deg,var(--blue),var(--teal));padding:5px 13px;border-radius:99px}
+  .kicker.gold{background:linear-gradient(135deg,var(--gold),var(--gold-d))}
+  h1{font-size:clamp(22px,6.2vw,30px);font-weight:900;margin:2px 0;line-height:1.25}
+  h2{font-size:clamp(19px,5.4vw,25px);font-weight:900;margin:0;line-height:1.3}
+  .lead{color:var(--muted);font-size:15px;line-height:1.7;margin:0}
+  b.hl{color:#fff}
+  .gold{color:var(--gold)}
 
-  /* ===== Link box / code ===== */
   .linkbox{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-    background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:6px 0 4px}
-  .linkbox .lbl{font-size:12px;color:var(--muted2);flex:none}
-  .linkbox a,.linkbox .url{color:var(--teal);font-weight:700;word-break:break-all;text-decoration:none;font-size:15px}
-  .copy{margin-left:auto;background:rgba(63,134,255,.14);border:1px solid rgba(63,134,255,.4);
-    color:#bcd4ff;border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer}
-  .copy:active{transform:scale(.96)}
+    background:var(--bg2);border:1px solid var(--line);border-radius:13px;padding:13px 15px}
+  .linkbox .lbl{font-size:11.5px;color:var(--muted2);flex:none;width:100%}
+  .linkbox .url{color:var(--teal);font-weight:800;word-break:break-all;font-size:16px}
+  .copy{margin-left:auto;background:rgba(63,134,255,.16);border:1px solid rgba(63,134,255,.45);
+    color:#bcd4ff;border-radius:10px;padding:8px 14px;font-size:13px;font-weight:800;cursor:pointer}
+  .copy:active{transform:scale(.95)}
   kbd{background:#0b1322;border:1px solid var(--line);border-bottom-width:2px;border-radius:7px;
-    padding:1px 8px;font-weight:800;color:var(--gold);font-size:.92em;font-family:inherit}
+    padding:1px 9px;font-weight:800;color:var(--gold);font-family:inherit}
 
-  /* ===== Speech / 話術 ===== */
-  .quote{background:linear-gradient(180deg,rgba(39,211,196,.08),rgba(63,134,255,.05));
-    border:1px solid rgba(39,211,196,.3);border-left:4px solid var(--teal);
-    border-radius:12px;padding:14px 16px;margin:12px 0;font-size:14px}
-  .quote .tag{display:inline-block;font-size:11.5px;font-weight:800;color:var(--teal);
-    letter-spacing:.5px;margin-bottom:6px}
+  .quote{background:linear-gradient(180deg,rgba(39,211,196,.09),rgba(63,134,255,.05));
+    border:1px solid rgba(39,211,196,.32);border-left:4px solid var(--teal);
+    border-radius:13px;padding:14px 16px;font-size:14px;line-height:1.7}
   .quote b{color:#fff}
 
-  /* ===== Screenshot gallery ===== */
-  .shots{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:16px 0 4px}
-  .shot{background:var(--bg2);border:1px solid var(--line);border-radius:14px;overflow:hidden;
-    display:flex;flex-direction:column}
-  .shot .cap{display:flex;gap:8px;align-items:flex-start;padding:11px 12px}
-  .shot .n{flex:none;width:22px;height:22px;border-radius:7px;background:var(--gold);color:#1a1306;
-    font-weight:900;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:1px}
-  .shot .cap b{font-size:13.5px;display:block}
-  .shot .cap span{font-size:12px;color:var(--muted)}
-  .shot .imgwrap{background:#05080f;display:flex;align-items:center;justify-content:center;padding:8px}
-  .shot img{width:100%;height:auto;border-radius:8px;display:block;cursor:zoom-in}
+  /* 流程列表 */
+  .steps{display:flex;flex-direction:column;gap:11px}
+  .steps .it{display:flex;gap:13px;align-items:flex-start;background:var(--bg2);
+    border:1px solid var(--line);border-radius:13px;padding:13px 15px}
+  .steps .it .n{flex:none;width:27px;height:27px;border-radius:8px;background:var(--card2);
+    border:1px solid var(--line);color:var(--gold);font-weight:900;font-size:14px;
+    display:flex;align-items:center;justify-content:center}
+  .steps .it .tx{font-size:14.5px;line-height:1.5}
+  .steps .it .tx b{color:#fff}
 
-  /* ===== Cloud / TG figure ===== */
-  .figure{margin:14px 0 2px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg2)}
-  .figure img{width:100%;height:auto;display:block;cursor:zoom-in}
-  .figure .fc{padding:10px 14px;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line)}
+  /* 手機截圖 */
+  .phone{align-self:center;border:1px solid var(--line);border-radius:18px;overflow:hidden;
+    background:#05080f;padding:8px;max-width:300px;box-shadow:0 14px 40px rgba(0,0,0,.45)}
+  .phone img{width:100%;height:auto;max-height:46dvh;object-fit:contain;border-radius:11px;display:block}
+  .shotcap{text-align:center}
+  .shotcap .t{font-weight:800;font-size:17px}
+  .shotcap .s{color:var(--muted);font-size:13.5px;margin-top:3px}
 
-  /* ===== Mapping table → responsive cards ===== */
-  .map{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 2px}
-  .map .row{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--line);
-    border-radius:11px;padding:11px 13px}
-  .map .from{font-weight:700;font-size:14px}
-  .map .to{margin-left:auto;color:var(--gold);font-size:13.5px;font-weight:700;white-space:nowrap}
+  .fig{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg2)}
+  .fig img{width:100%;height:auto;max-height:34dvh;object-fit:cover;object-position:top;display:block}
+  .fig .c{padding:9px 13px;font-size:12px;color:var(--muted);border-top:1px solid var(--line)}
 
-  /* ===== TG notify sample ===== */
-  .tgmsg{background:#0e1726;border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;
-    font-size:14px}
-  .tgmsg .l{display:flex;gap:10px;padding:5px 0;border-bottom:1px dashed #1e2940}
-  .tgmsg .l:last-child{border-bottom:0}
-  .tgmsg .k{color:var(--muted);flex:none;min-width:64px}
-  .tgmsg .v{font-weight:600;word-break:break-all}
-  .tgmsg .v.lnk{color:var(--teal)}
-  .tgmsg .hint{color:var(--muted2);font-weight:400;font-size:12.5px}
+  /* 分類對照 */
+  .map{display:flex;flex-direction:column;gap:8px}
+  .map .r{display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--line);
+    border-radius:11px;padding:10px 13px;font-size:14px}
+  .map .r b{font-weight:800}
+  .map .r .to{margin-left:auto;color:var(--gold);font-weight:800;font-size:13.5px;white-space:nowrap}
 
-  /* ===== Tips list ===== */
-  ul.tips{list-style:none;padding:0;margin:8px 0 0}
-  ul.tips li{position:relative;padding:9px 0 9px 30px;border-bottom:1px solid #1b2438;font-size:14px}
+  /* TG 通知 */
+  .tg{background:#0e1726;border:1px solid var(--line);border-radius:13px;padding:12px 14px;font-size:13.5px}
+  .tg .l{display:flex;gap:9px;padding:5px 0;border-bottom:1px dashed #1e2940}
+  .tg .l:last-child{border-bottom:0}
+  .tg .k{color:var(--muted);flex:none;min-width:58px}
+  .tg .v{font-weight:600;word-break:break-all}
+  .tg .v.lnk{color:var(--teal)}
+  .tg .h{color:var(--muted2);font-weight:400;font-size:12px}
+
+  ul.tips{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:2px}
+  ul.tips li{position:relative;padding:9px 0 9px 28px;border-bottom:1px solid #1b2438;font-size:14.5px;line-height:1.55}
   ul.tips li:last-child{border-bottom:0}
-  ul.tips li::before{content:"✓";position:absolute;left:4px;top:9px;color:var(--green);font-weight:900}
+  ul.tips li::before{content:"✓";position:absolute;left:2px;top:9px;color:var(--green);font-weight:900}
   ul.tips b{color:#fff}
 
-  /* ===== FAQ ===== */
-  details{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:2px 14px;margin:9px 0}
-  details[open]{border-color:#2f3d5c}
-  summary{cursor:pointer;padding:12px 0;font-weight:700;font-size:14px;list-style:none;display:flex;gap:9px;align-items:center}
-  summary::-webkit-details-marker{display:none}
-  summary::before{content:"？";flex:none;width:21px;height:21px;border-radius:6px;background:var(--red);
-    color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center}
-  details[open] summary::before{content:"！";background:var(--green)}
-  details .a{padding:0 0 13px 30px;color:var(--muted);font-size:13.5px}
-
-  /* ===== Wall summary ===== */
   .wall{background:linear-gradient(135deg,#1a1206,#0f1626);border:1px solid var(--gold-d);
-    border-radius:var(--r);padding:18px;margin:22px 0 6px}
-  .wall h3{margin:0 0 12px;color:var(--gold);font-size:16px;display:flex;align-items:center;gap:8px}
+    border-radius:14px;padding:16px}
   .wall .w{display:flex;gap:10px;padding:8px 0;font-size:14px;border-bottom:1px solid rgba(232,192,116,.18)}
   .wall .w:last-child{border-bottom:0}
-  .wall .w b{color:var(--gold);flex:none;min-width:62px}
+  .wall .w b{color:var(--gold);flex:none;min-width:58px}
 
-  footer{text-align:center;color:var(--muted2);font-size:12px;margin-top:30px}
+  .big-emo{font-size:54px;text-align:center;line-height:1}
 
-  /* ===== Lightbox ===== */
-  .lb{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;
-    z-index:99;padding:20px;cursor:zoom-out}
-  .lb.on{display:flex}
-  .lb img{max-width:100%;max-height:100%;border-radius:10px}
+  /* 滑動提示 */
+  .swipe{align-self:center;display:flex;align-items:center;gap:9px;color:var(--muted);
+    font-size:13.5px;margin-top:4px;animation:sw 1.8s ease-in-out infinite}
+  @keyframes sw{0%,100%{transform:translateX(-5px)}50%{transform:translateX(5px)}}
 
-  /* ===== RWD ===== */
-  @media(max-width:680px){
-    .shots{grid-template-columns:1fr}
-    .map{grid-template-columns:1fr}
-    section{padding:18px 15px}
-    .flow .f{font-size:12px;padding:8px 11px}
-  }
-  @media(max-width:380px){
-    body{padding:0 11px}
-    .tgmsg .k{min-width:54px}
-  }
+  /* ===== 底部導覽 ===== */
+  .nav{position:fixed;left:0;right:0;bottom:0;z-index:20;
+    display:flex;align-items:center;gap:14px;padding:12px 18px;
+    padding-bottom:max(12px,env(safe-area-inset-bottom));
+    background:linear-gradient(0deg,rgba(10,14,22,.97),rgba(10,14,22,.6) 75%,transparent)}
+  .nbtn{flex:none;width:48px;height:48px;border-radius:14px;border:1px solid var(--line);
+    background:var(--card);color:var(--txt);font-size:22px;font-weight:700;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:.15s}
+  .nbtn:active{transform:scale(.92)}
+  .nbtn:disabled{opacity:.32;cursor:default}
+  .nbtn.next{flex:1;width:auto;gap:8px;font-size:16px;font-weight:800;
+    background:linear-gradient(135deg,var(--blue),var(--teal));color:#03121f;border:0}
+  .nbtn.next.done{background:linear-gradient(135deg,var(--gold),var(--gold-d))}
+  .dots{display:flex;gap:6px;justify-content:center;flex:none}
+  .dots i{width:7px;height:7px;border-radius:99px;background:#2b374f;transition:.25s;cursor:pointer}
+  .dots i.on{background:var(--gold);width:20px}
+
+  /* Lightbox */
+  .lb{position:fixed;inset:0;background:rgba(0,0,0,.93);display:none;align-items:center;justify-content:center;
+    z-index:50;padding:20px;cursor:zoom-out}
+  .lb.on{display:flex}.lb img{max-width:100%;max-height:100%;border-radius:10px}
+
+  @media(min-width:560px){ .phone{max-width:320px} }
 </style>
 </head>
 <body>
-<div class="wrap">
 
-  <!-- HERO -->
-  <header class="hero">
-    <div class="logo"><span class="y">夜色</span><span class="s">YS</span><span class="crown">👑</span></div>
-    <div class="htitle">📁 貴賓檔案上傳系統 · 客服操作教學</div>
-    <p class="hsub">貴賓遇到「出金問題 / 存款匯款證明 / 投注對帳爭議 / VIP 轉移 / 其他」需要提供截圖或影片佐證時,讓貴賓<b>自己上傳</b>,檔案自動進雲端,客服直接查 + TG 即時通知。貴賓<b>不用登入、無大小限制</b>。</p>
-    <span class="pill">內部教育訓練文件 · 限客服使用</span>
-  </header>
+<!-- 頂部 -->
+<div class="top">
+  <span class="brand"><span class="y">夜色</span>YS</span>
+  <div class="prog"><div class="bar" id="bar"></div></div>
+  <span class="pageno" id="pageno">1 / 10</span>
+</div>
 
-  <!-- FLOW -->
-  <div class="flow">
-    <span class="f">①給貴賓連結</span><span class="arr">→</span>
-    <span class="f">②選類型+填帳號+上傳</span><span class="arr">→</span>
-    <span class="f">③看到「上傳成功✅」</span><span class="arr">→</span>
-    <span class="f">④截圖回傳客服</span><span class="arr">→</span>
-    <span class="f">⑤客服查雲端 / TG收通知</span>
-  </div>
+<!-- 滑動卡片 -->
+<div class="deck" id="deck"><div class="track" id="track">
 
-  <!-- STEP 1 -->
-  <section>
-    <h2><span class="sec-no">1</span>把上傳連結給貴賓</h2>
-    <p class="lead">這條連結已設定放在 AI 機器人回覆裡;若要手動給,直接貼下面這條。</p>
+  <!-- 1 封面 -->
+  <section class="slide"><div class="inner" style="text-align:center;gap:16px">
+    <div class="big-emo">📁👑</div>
+    <h1><span class="gold">貴賓檔案上傳系統</span><br>客服操作教學</h1>
+    <p class="lead">貴賓遇到「出金 / 存款證明 / 對帳爭議 / VIP 轉移」要提供佐證時,讓他<b class="hl">自己上傳</b> → 檔案自動進雲端 → 客服查 + TG 即時通知。<br>貴賓<b class="hl">不用登入、無大小限制</b>。</p>
+    <span class="kicker gold" style="align-self:center">內部教育訓練 · 限客服使用</span>
+    <div class="swipe">👈 左右滑動 / 按下一頁 👉</div>
+  </div></section>
+
+  <!-- 2 流程總覽 -->
+  <section class="slide"><div class="inner">
+    <span class="kicker">總覽</span>
+    <h2>整體流程 5 步</h2>
+    <div class="steps">
+      <div class="it"><span class="n">1</span><span class="tx"><b>客服把上傳連結給貴賓</b></span></div>
+      <div class="it"><span class="n">2</span><span class="tx">貴賓<b>選問題類型 + 填會員帳號 + 上傳</b></span></div>
+      <div class="it"><span class="n">3</span><span class="tx">貴賓看到「<b>✅ 上傳成功</b>」</span></div>
+      <div class="it"><span class="n">4</span><span class="tx">貴賓<b>截圖回傳</b>客服</span></div>
+      <div class="it"><span class="n">5</span><span class="tx">客服<b>查雲端 / TG 收到通知</b></span></div>
+    </div>
+  </div></section>
+
+  <!-- 3 Step1 給連結 -->
+  <section class="slide"><div class="inner">
+    <span class="kicker">第 1 步</span>
+    <h2>把上傳連結給貴賓</h2>
+    <p class="lead">已設定放在 AI 機器人回覆裡;手動給就貼這條 👇</p>
     <div class="linkbox">
       <span class="lbl">上傳連結</span>
-      <a href="https://livechat.ys89.com/" target="_blank" rel="noopener" id="upUrl">https://livechat.ys89.com/</a>
+      <span class="url">https://livechat.ys89.com/</span>
       <button class="copy" data-copy="https://livechat.ys89.com/">複製</button>
     </div>
     <div class="quote">
-      <span class="tag">📣 可直接複製給貴賓的話術</span>
-      您好 🙏 麻煩您點這個連結上傳佐證資料 👉 <b>https://livechat.ys89.com/</b><br>
-      1️⃣ 選擇您的「問題類型」　2️⃣ 填寫您的「會員帳號」　3️⃣ 按「選擇影片／圖片上傳」<br>
-      上傳完成後,請<b>截「✅上傳成功」那張圖</b>回傳給我,並告訴我您的<b>會員 ID + 上傳項目</b>,我立即為您查詢 😊
+      <b>📣 可複製給貴賓的話術:</b><br>
+      您好 🙏 麻煩點這連結上傳佐證 👉 https://livechat.ys89.com/<br>
+      1️⃣ 選問題類型　2️⃣ 填會員帳號　3️⃣ 按上傳<br>
+      完成請<b>截「✅上傳成功」回傳</b>,並告知<b>會員 ID + 上傳項目</b>,我立即查詢 😊
     </div>
-  </section>
+  </div></section>
 
-  <!-- STEP 2 -->
-  <section>
-    <h2><span class="sec-no">2</span>貴賓會看到的 3 個畫面 <small>心裡有數才好引導</small></h2>
-    <div class="shots">
-      <div class="shot">
-        <div class="cap"><span class="n">1</span><div><b>選擇上傳</b><span>選類型 + 填會員帳號 + 按上傳</span></div></div>
-        <div class="imgwrap"><img src="讓貴賓選擇要上傳的文件.png" alt="選擇要上傳的文件"></div>
-      </div>
-      <div class="shot">
-        <div class="cap"><span class="n">2</span><div><b>上傳中</b><span>進度條跑 100%・別關頁面</span></div></div>
-        <div class="imgwrap"><img src="上傳中.png" alt="上傳中"></div>
-      </div>
-      <div class="shot">
-        <div class="cap"><span class="n">3</span><div><b>上傳成功</b><span>綠✅・請貴賓截這張回傳</span></div></div>
-        <div class="imgwrap"><img src="上傳完成.jpg" alt="上傳成功"></div>
-      </div>
-    </div>
-    <ul class="tips" style="margin-top:14px">
-      <li>第①畫面 <b>一定要先選問題類型 + 填會員帳號</b>(例:ys12345),否則雲端對不到人。</li>
-      <li>第②畫面提示「請勿關閉頁面」→ 叫貴賓<b>別關、別重整</b>,等跑完。</li>
-      <li>第③畫面要傳多個檔 → 按 <b>「📤 再上傳一個」</b>;完成請截圖回傳。</li>
-    </ul>
-  </section>
+  <!-- 4 貴賓畫面1 -->
+  <section class="slide"><div class="inner" style="gap:16px">
+    <span class="kicker">貴賓畫面 ①</span>
+    <div class="phone"><img src="讓貴賓選擇要上傳的文件.png" alt="選擇上傳"></div>
+    <div class="shotcap"><div class="t">選擇上傳</div>
+      <div class="s">選「問題類型」+ 填<b class="hl gold">會員帳號</b>(例 ys12345)+ 按「選擇影片/圖片上傳」</div></div>
+    <p class="lead" style="text-align:center">⚠️ 一定要先<b class="hl">選類型 + 填會員帳號</b>,否則雲端對不到人。</p>
+  </div></section>
 
-  <!-- STEP 3 -->
-  <section>
-    <h2><span class="sec-no">3</span>客服去雲端查貴賓上傳的檔案</h2>
+  <!-- 5 貴賓畫面2 -->
+  <section class="slide"><div class="inner" style="gap:16px">
+    <span class="kicker">貴賓畫面 ②</span>
+    <div class="phone"><img src="上傳中.png" alt="上傳中"></div>
+    <div class="shotcap"><div class="t">上傳中…</div>
+      <div class="s">進度條跑到 100%,提示「請勿關閉頁面」</div></div>
+    <p class="lead" style="text-align:center">提醒貴賓:<b class="hl">別關頁面、別重整</b>,等它跑完。影片大會慢一點。</p>
+  </div></section>
+
+  <!-- 6 貴賓畫面3 -->
+  <section class="slide"><div class="inner" style="gap:16px">
+    <span class="kicker">貴賓畫面 ③</span>
+    <div class="phone"><img src="上傳完成.jpg" alt="上傳成功"></div>
+    <div class="shotcap"><div class="t">✅ 上傳成功</div>
+      <div class="s">綠勾「客服已收到」· 有「📤再上傳一個 / 💬回客服對話」</div></div>
+    <p class="lead" style="text-align:center">請貴賓<b class="hl">截這張回傳</b>;要傳多個按「📤 再上傳一個」。</p>
+  </div></section>
+
+  <!-- 7 Step3 雲端 -->
+  <section class="slide"><div class="inner">
+    <span class="kicker">第 3 步</span>
+    <h2>客服去雲端查檔</h2>
     <div class="linkbox">
-      <span class="lbl">雲端資料夾</span>
-      <span class="url">Google 雲端「YS夜色審查文件」</span>
+      <span class="lbl">Google 雲端「YS夜色審查文件」</span>
+      <span class="url" style="font-size:14px">drive.google.com/…</span>
       <button class="copy" data-copy="https://drive.google.com/drive/folders/1tt-8CpiXkDYxv5oz2riF9CR8cSbFgnnv">複製連結</button>
     </div>
-    <p class="lead" style="margin-top:14px">裡面已分 <b>5 個子資料夾</b>,和貴賓選的「問題類型」一一對應 —— 貴賓選哪類,檔案就掉進哪個夾,照分類找最快:</p>
+    <p class="lead">貴賓選哪類,檔案就掉進對應子資料夾,照分類找最快:</p>
     <div class="map">
-      <div class="row"><span class="from">出金問題</span><span class="to">📁 出金問題</span></div>
-      <div class="row"><span class="from">存款/匯款證明</span><span class="to">📁 存款/匯款證明</span></div>
-      <div class="row"><span class="from">投注/對帳爭議</span><span class="to">📁 投注/對帳爭議</span></div>
-      <div class="row"><span class="from">VIP 轉移</span><span class="to">📁 vip轉移</span></div>
-      <div class="row"><span class="from">其他</span><span class="to">📁 其他</span></div>
+      <div class="r"><b>出金問題</b><span class="to">📁 出金問題</span></div>
+      <div class="r"><b>存款/匯款證明</b><span class="to">📁 存款/匯款證明</span></div>
+      <div class="r"><b>投注/對帳爭議</b><span class="to">📁 投注/對帳爭議</span></div>
+      <div class="r"><b>VIP 轉移</b><span class="to">📁 vip轉移</span></div>
+      <div class="r"><b>其他</b><span class="to">📁 其他</span></div>
     </div>
-    <div class="figure">
-      <img src="雲端頁面.png" alt="雲端審查文件資料夾">
-      <div class="fc">▲ 雲端後台:已自動分好 5 個分類資料夾,檔名通常帶會員帳號,用搜尋更快。</div>
-    </div>
-  </section>
+    <div class="fig"><img src="雲端頁面.png" alt="雲端後台">
+      <div class="c">▲ 已自動分好 5 夾;檔名帶會員帳號,用搜尋更快。</div></div>
+  </div></section>
 
-  <!-- STEP 4 -->
-  <section>
-    <h2><span class="sec-no">4</span>加入 TG 機器人接通知 <small>最推薦・點一下就開檔</small></h2>
-    <p class="lead">只要有貴賓上傳,機器人會即時把<b>「檔案直連」</b>推給你,不用一直盯雲端、也不用進資料夾翻。</p>
+  <!-- 8 Step4 TG -->
+  <section class="slide"><div class="inner">
+    <span class="kicker gold">第 4 步 · 最推薦</span>
+    <h2>TG 機器人接通知</h2>
+    <p class="lead">有人上傳就<b class="hl">即時推「檔案直連」</b>,點一下就開,不用進雲端翻。</p>
     <div class="linkbox">
-      <span class="lbl">機器人</span>
-      <a href="https://t.me/Ys89livechat_bot" target="_blank" rel="noopener">@Ys89livechat_bot（夜色客服）</a>
+      <span class="lbl">機器人(夜色客服)</span>
+      <span class="url" style="font-size:15px">@Ys89livechat_bot</span>
       <button class="copy" data-copy="https://t.me/Ys89livechat_bot">複製</button>
     </div>
-    <ul class="tips" style="margin-top:6px">
-      <li>打開機器人 → 送一則 <kbd>/start</kbd></li>
-      <li>機器人回 <b>「✅ 已訂閱客服影片通知」</b> → 完成(每位客服各做一次)</li>
-      <li>不想收了 → 送 <kbd>/stop</kbd> 取消</li>
-    </ul>
-
-    <p class="lead" style="margin:18px 0 4px">之後每筆上傳,機器人推這樣一則(逐欄解讀):</p>
-    <div class="tgmsg">
-      <div class="l"><span class="k">📁 標題</span><span class="v">新客服影片上傳</span></div>
-      <div class="l"><span class="k">🏷️ 類型</span><span class="v">VIP 轉移 <span class="hint">← 貴賓選的問題類型</span></span></div>
-      <div class="l"><span class="k">👤 會員</span><span class="v">abcd123 <span class="hint">← 查詢就靠這個</span></span></div>
-      <div class="l"><span class="k">📄 檔名</span><span class="v">abcd123_VIP轉移_2026-06-04_14時49分.mp4</span></div>
-      <div class="l"><span class="k">🔗 連結</span><span class="v lnk">drive.google.com/file/d/…/view <span class="hint">← 點這條直接開檔</span></span></div>
-    </div>
-    <div class="figure">
-      <img src="tgbot對話視窗解讀.jpg" alt="TG 機器人通知範例">
-      <div class="fc">▲ 實際 TG 通知:檔名自動 = <b>會員帳號_問題類型_上傳日期時間.副檔名</b>,一看就知是誰、什麼事、何時傳。</div>
-    </div>
-    <div class="quote" style="border-color:rgba(232,192,116,.35);border-left-color:var(--gold);
-      background:linear-gradient(180deg,rgba(232,192,116,.08),rgba(232,192,116,.03))">
-      <span class="tag" style="color:var(--gold)">⚡ 客服最快流程</span>
-      TG 收到通知 → 直接點 <b>🔗 連結</b>看檔 → 比對會員帳號回覆貴賓。<b>雲端資料夾當備查就好。</b>
-    </div>
-  </section>
-
-  <!-- TIPS -->
-  <section>
-    <h2><span class="sec-no">★</span>客服務必提醒貴賓的「眉角」</h2>
     <ul class="tips">
-      <li><b>一定要填會員帳號</b> — 沒填,雲端收到檔也對不到是誰。</li>
-      <li><b>上傳完成要截「✅上傳成功」那張回傳</b> — 當憑證,也方便客服確認真的有進來。</li>
-      <li><b>回報「會員 ID + 上傳項目」</b> — 例:<b>ys12345,出金問題</b>,客服查最快。</li>
-      <li><b>不用登入</b> — 叫貴賓別卡在找登入,這頁直接上傳。</li>
-      <li><b>要傳多個</b> — 按成功頁的「📤 再上傳一個」,不用重貼連結。</li>
+      <li>開機器人 → 送一則 <kbd>/start</kbd> → 回「✅ 已訂閱」即完成</li>
+      <li>不想收了 → 送 <kbd>/stop</kbd></li>
     </ul>
-  </section>
+    <div class="tg">
+      <div class="l"><span class="k">🏷️ 類型</span><span class="v">VIP 轉移</span></div>
+      <div class="l"><span class="k">👤 會員</span><span class="v">abcd123 <span class="h">← 查詢靠這個</span></span></div>
+      <div class="l"><span class="k">📄 檔名</span><span class="v">abcd123_VIP轉移_…_14時49分.mp4</span></div>
+      <div class="l"><span class="k">🔗 連結</span><span class="v lnk">點開直接看檔</span></div>
+    </div>
+    <div class="fig"><img src="tgbot對話視窗解讀.jpg" alt="TG 通知">
+      <div class="c">▲ 檔名 = 會員帳號_類型_日期時間,一看就懂。</div></div>
+  </div></section>
 
-  <!-- FAQ -->
-  <section>
-    <h2><span class="sec-no">?</span>常見狀況排除</h2>
-    <details><summary>貴賓說「傳不上去 / 沒反應」</summary>
-      <div class="a">確認他<b>有先選問題類型 + 填會員帳號</b>;請他改用 <b>Chrome</b> 再試一次。</div></details>
-    <details><summary>貴賓說「卡在上傳中很久」</summary>
-      <div class="a">影片較大會慢一點,請他<b>別關頁面</b>耐心等;真的超久請他換網路 / Wi-Fi 重傳。</div></details>
-    <details><summary>客服「在雲端找不到檔」</summary>
-      <div class="a">先點<b>對應子資料夾</b>;用會員帳號<b>搜尋</b>;確認貴賓真的有看到 ✅ 上傳成功(沒看到=沒傳成功)。也可直接看 TG 通知的 🔗 連結。</div></details>
-    <details><summary>貴賓「要傳第二個檔」</summary>
-      <div class="a">請他按 ✅ 成功頁的「📤 再上傳一個」。</div></details>
-  </section>
+  <!-- 9 眉角 -->
+  <section class="slide"><div class="inner">
+    <span class="kicker">務必提醒貴賓</span>
+    <h2>5 個眉角</h2>
+    <ul class="tips">
+      <li><b>一定填會員帳號</b> — 沒填對不到人</li>
+      <li><b>截「✅上傳成功」回傳</b> — 當憑證</li>
+      <li><b>回報「會員 ID + 項目」</b> — 例 ys12345,出金問題</li>
+      <li><b>不用登入</b> — 別卡在找登入</li>
+      <li><b>傳不上去?</b> — 確認有選類型+填帳號;改用 Chrome 再試</li>
+    </ul>
+  </div></section>
 
-  <!-- WALL -->
-  <div class="wall">
-    <h3>📌 一眼版(可截圖貼牆)</h3>
-    <div class="w"><b>給貴賓</b><span>https://livechat.ys89.com/ → 選類型 → 填會員帳號 → 上傳 → 截✅圖回傳</span></div>
-    <div class="w"><b>客服查</b><span>Google 雲端「YS夜色審查文件」→ 對應子資料夾找</span></div>
-    <div class="w"><b>接通知</b><span>@Ys89livechat_bot 送 /start → 上傳時自動推檔案連結</span></div>
-  </div>
+  <!-- 10 結尾 -->
+  <section class="slide"><div class="inner" style="text-align:center;gap:16px">
+    <div class="big-emo">🎉</div>
+    <h2>就這樣,搞定!</h2>
+    <div class="wall" style="text-align:left">
+      <div class="w"><b>給貴賓</b><span>livechat.ys89.com → 選類型 → 填帳號 → 上傳 → 截✅回傳</span></div>
+      <div class="w"><b>客服查</b><span>雲端「YS夜色審查文件」對應子夾</span></div>
+      <div class="w"><b>接通知</b><span>@Ys89livechat_bot 送 /start</span></div>
+    </div>
+    <p class="lead">📌 可把這頁加到手機桌面,隨時翻閱。</p>
+  </div></section>
 
-  <footer>夜色YS · 貴賓檔案上傳系統客服教學 · 內部文件請勿外流</footer>
+</div></div>
+
+<!-- 底部導覽 -->
+<div class="nav">
+  <button class="nbtn" id="prev" aria-label="上一頁">‹</button>
+  <div class="dots" id="dots"></div>
+  <button class="nbtn next" id="next">下一頁 ›</button>
 </div>
 
 <div class="lb" id="lb"><img src="" alt=""></div>
 
 <script>
-  // 複製
+  var deck=document.getElementById('deck');
+  var track=document.getElementById('track');
+  var slides=track.querySelectorAll('.slide');
+  var N=slides.length, cur=0;
+  var bar=document.getElementById('bar'), pageno=document.getElementById('pageno');
+  var prev=document.getElementById('prev'), next=document.getElementById('next');
+  var dotsBox=document.getElementById('dots');
+
+  for(var i=0;i<N;i++){ var d=document.createElement('i'); d.dataset.i=i;
+    d.onclick=(function(k){return function(){goto(k)}})(i); dotsBox.appendChild(d); }
+  var dots=dotsBox.children;
+
+  function place(offsetPx){ // offsetPx：拖曳即時跟手用
+    var base=-cur*deck.clientWidth + (offsetPx||0);
+    track.style.transform='translateX('+base+'px)';
+  }
+  function render(){
+    place(0);
+    bar.style.width=((cur+1)/N*100)+'%';
+    pageno.textContent=(cur+1)+' / '+N;
+    for(var i=0;i<N;i++) dots[i].className=(i===cur?'on':'');
+    prev.disabled=(cur===0);
+    if(cur===N-1){ next.textContent='重看一次 ↻'; next.classList.add('done'); }
+    else { next.textContent='下一頁 ›'; next.classList.remove('done'); }
+  }
+  function goto(i){ cur=Math.max(0,Math.min(N-1,i)); render(); }
+  prev.onclick=function(){ goto(cur-1); };
+  next.onclick=function(){ if(cur===N-1) goto(0); else goto(cur+1); };
+
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight') goto(cur+1);
+    else if(e.key==='ArrowLeft') goto(cur-1);
+  });
+  window.addEventListener('resize',function(){ render(); });
+
+  // ===== 觸控滑動(跟手 + 門檻換頁;垂直交給 slide 自己捲)=====
+  var sx=0, sy=0, dx=0, drag=false, lock=null;
+  deck.addEventListener('touchstart',function(e){
+    if(e.touches.length>1) return;
+    sx=e.touches[0].clientX; sy=e.touches[0].clientY; dx=0; drag=true; lock=null;
+    track.classList.add('drag');
+  },{passive:true});
+  deck.addEventListener('touchmove',function(e){
+    if(!drag) return;
+    var x=e.touches[0].clientX-sx, y=e.touches[0].clientY-sy;
+    if(lock===null){ lock=Math.abs(x)>Math.abs(y)?'h':'v'; }
+    if(lock!=='h') return;            // 垂直手勢：不攔,讓 slide 內容上下捲
+    dx=x;
+    if((cur===0&&x>0)||(cur===N-1&&x<0)) dx=x*0.35;  // 邊界阻尼
+    place(dx);
+  },{passive:true});
+  function endDrag(){
+    if(!drag) return; drag=false; track.classList.remove('drag');
+    var th=Math.min(90, deck.clientWidth*0.18);
+    if(lock==='h' && Math.abs(dx)>th){ goto(cur + (dx<0?1:-1)); }
+    else { render(); }
+    dx=0;
+  }
+  deck.addEventListener('touchend',endDrag,{passive:true});
+  deck.addEventListener('touchcancel',endDrag,{passive:true});
+
+  // ===== 桌機滑鼠拖曳(小位移視為點擊,不干擾按鈕/圖片)=====
+  var mdown=false, mx=0;
+  deck.addEventListener('mousedown',function(e){
+    if(e.target.closest('button,a,.copy,.phone img,.fig img')) return;
+    mdown=true; mx=e.clientX; dx=0; track.classList.add('drag');
+  });
+  window.addEventListener('mousemove',function(e){
+    if(!mdown) return; dx=e.clientX-mx;
+    if((cur===0&&dx>0)||(cur===N-1&&dx<0)) dx=dx*0.35;
+    place(dx); e.preventDefault();
+  });
+  window.addEventListener('mouseup',function(){
+    if(!mdown) return; mdown=false; track.classList.remove('drag');
+    var th=Math.min(120, deck.clientWidth*0.2);
+    if(Math.abs(dx)>th){ goto(cur + (dx<0?1:-1)); } else { render(); }
+    dx=0;
+  });
+
   document.querySelectorAll('.copy').forEach(function(b){
-    b.addEventListener('click',function(){
-      var t=b.getAttribute('data-copy');
-      navigator.clipboard&&navigator.clipboard.writeText(t).then(function(){
+    b.onclick=function(e){ e.stopPropagation(); var v=b.getAttribute('data-copy');
+      navigator.clipboard&&navigator.clipboard.writeText(v).then(function(){
         var o=b.textContent;b.textContent='已複製 ✓';b.style.color='#9ff5c0';
-        setTimeout(function(){b.textContent=o;b.style.color='';},1400);
+        setTimeout(function(){b.textContent=o;b.style.color='';},1300);
       });
-    });
+    };
   });
-  // 圖片放大
+
   var lb=document.getElementById('lb'),lbimg=lb.querySelector('img');
-  document.querySelectorAll('.shot img,.figure img').forEach(function(im){
-    im.addEventListener('click',function(){lbimg.src=im.src;lb.classList.add('on');});
+  document.querySelectorAll('.phone img,.fig img').forEach(function(im){
+    im.style.cursor='zoom-in';
+    im.onclick=function(){ lbimg.src=im.src; lb.classList.add('on'); };
   });
-  lb.addEventListener('click',function(){lb.classList.remove('on');lbimg.src='';});
+  lb.onclick=function(){ lb.classList.remove('on'); lbimg.src=''; };
+
+  render();
 </script>
 </body>
 </html>
